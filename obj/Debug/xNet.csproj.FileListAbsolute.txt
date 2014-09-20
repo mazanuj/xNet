@@ -1,8 +1,0 @@
-C:\Users\Мазяка\Desktop\PROGRAMS\GitHub\PostAds\xNet\bin\Debug\xNet.XML
-C:\Users\Мазяка\Desktop\PROGRAMS\GitHub\PostAds\xNet\bin\Debug\xNet.dll
-C:\Users\Мазяка\Desktop\PROGRAMS\GitHub\PostAds\xNet\bin\Debug\xNet.pdb
-C:\Users\Мазяка\Desktop\PROGRAMS\GitHub\PostAds\xNet\obj\Debug\xNet.csprojResolveAssemblyReference.cache
-C:\Users\Мазяка\Desktop\PROGRAMS\GitHub\PostAds\xNet\obj\Debug\xNet.Resources.resources
-C:\Users\Мазяка\Desktop\PROGRAMS\GitHub\PostAds\xNet\obj\Debug\xNet.csproj.GenerateResource.Cache
-C:\Users\Мазяка\Desktop\PROGRAMS\GitHub\PostAds\xNet\obj\Debug\xNet.dll
-C:\Users\Мазяка\Desktop\PROGRAMS\GitHub\PostAds\xNet\obj\Debug\xNet.pdb
