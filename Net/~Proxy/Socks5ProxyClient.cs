@@ -92,7 +92,7 @@ namespace xNet.Net
         /// <exception cref="System.FormatException">Формат порта является неправильным.</exception>
         public static Socks5ProxyClient Parse(string proxyAddress)
         {
-            return ProxyClient.Parse(ProxyType.Socks5, proxyAddress) as Socks5ProxyClient;
+            return Parse(ProxyType.Socks5, proxyAddress) as Socks5ProxyClient;
         }
 
         /// <summary>
@@ -105,7 +105,7 @@ namespace xNet.Net
         {
             ProxyClient proxy;
 
-            if (ProxyClient.TryParse(ProxyType.Socks5, proxyAddress, out proxy))
+            if (TryParse(ProxyType.Socks5, proxyAddress, out proxy))
             {
                 result = proxy as Socks5ProxyClient;
                 return true;

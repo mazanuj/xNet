@@ -69,7 +69,7 @@ namespace xNet.Net
         /// <exception cref="System.FormatException">Формат порта является неправильным.</exception>
         public static HttpProxyClient Parse(string proxyAddress)
         {
-            return ProxyClient.Parse(ProxyType.Http, proxyAddress) as HttpProxyClient;
+            return Parse(ProxyType.Http, proxyAddress) as HttpProxyClient;
         }
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace xNet.Net
         {
             ProxyClient proxy;
 
-            if (ProxyClient.TryParse(ProxyType.Http, proxyAddress, out proxy))
+            if (TryParse(ProxyType.Http, proxyAddress, out proxy))
             {
                 result = proxy as HttpProxyClient;
                 return true;

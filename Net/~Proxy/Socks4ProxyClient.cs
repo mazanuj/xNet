@@ -73,7 +73,7 @@ namespace xNet.Net
         /// <exception cref="System.FormatException">Формат порта является неправильным.</exception>
         public static Socks4ProxyClient Parse(string proxyAddress)
         {
-            return ProxyClient.Parse(ProxyType.Socks4, proxyAddress) as Socks4ProxyClient;
+            return Parse(ProxyType.Socks4, proxyAddress) as Socks4ProxyClient;
         }
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace xNet.Net
         {
             ProxyClient proxy;
 
-            if (ProxyClient.TryParse(ProxyType.Socks4, proxyAddress, out proxy))
+            if (TryParse(ProxyType.Socks4, proxyAddress, out proxy))
             {
                 result = proxy as Socks4ProxyClient;
                 return true;

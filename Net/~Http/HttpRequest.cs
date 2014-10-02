@@ -2237,7 +2237,7 @@ namespace xNet.Net
 
             if (!IgnoreProtocolErrors)
             {
-                int statusCodeNum = (int)_response.StatusCode;
+                var statusCodeNum = (int)_response.StatusCode;
 
                 if (statusCodeNum >= 400 && statusCodeNum < 500)
                 {
@@ -2245,7 +2245,7 @@ namespace xNet.Net
                         Resources.HttpException_ClientError, statusCodeNum),
                         HttpExceptionStatus.ProtocolError, _response.StatusCode);
                 }
-                else if (statusCodeNum >= 500)
+                if (statusCodeNum >= 500)
                 {
                     throw new HttpException(string.Format(
                         Resources.HttpException_SeverError, statusCodeNum),

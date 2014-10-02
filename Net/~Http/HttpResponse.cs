@@ -4,7 +4,6 @@ using System.IO;
 using System.IO.Compression;
 using System.Text;
 using System.Threading;
-using xNet.Collections;
 using xNet.Text;
 
 namespace xNet.Net

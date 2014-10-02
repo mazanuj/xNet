@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Security;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using Microsoft.Win32;
 using System.Net.Security;
@@ -548,9 +549,9 @@ namespace xNet.Net
         #region Статические методы (закрытые)
 
         private static bool AcceptAllCertifications(object sender,
-            System.Security.Cryptography.X509Certificates.X509Certificate certification,
-            System.Security.Cryptography.X509Certificates.X509Chain chain,
-            System.Net.Security.SslPolicyErrors sslPolicyErrors)
+            X509Certificate certification,
+            X509Chain chain,
+            SslPolicyErrors sslPolicyErrors)
         {
             return true;
         }
