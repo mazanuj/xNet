@@ -41,7 +41,7 @@ namespace xNet.Threading
             #endregion
 
             _onEvent = onEvent;
-            _callbackOnEvent = new SendOrPostCallback(OnCallback);
+            _callbackOnEvent = OnCallback;
         }
 
 

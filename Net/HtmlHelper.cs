@@ -11,7 +11,7 @@ namespace xNet.Net
     {
         #region _htmlMnemonics
 
-        private static readonly Dictionary<string, string> _htmlMnemonics = new Dictionary<string, string>()
+        private static readonly Dictionary<string, string> _htmlMnemonics = new Dictionary<string, string>
         {
             { "apos", "'" },
             { "quot", "\"" },

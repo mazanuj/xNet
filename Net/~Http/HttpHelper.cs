@@ -16,7 +16,7 @@ namespace xNet.Net
     {
         #region HttpHeaders
 
-        internal static readonly Dictionary<HttpHeader, string> HttpHeaders = new Dictionary<HttpHeader, string>()
+        internal static readonly Dictionary<HttpHeader, string> HttpHeaders = new Dictionary<HttpHeader, string>
         {
             { HttpHeader.Accept, "Accept" },
             { HttpHeader.AcceptCharset, "Accept-Charset" },
@@ -84,7 +84,7 @@ namespace xNet.Net
 
         static HttpHelper()
         {
-            AcceptAllCertificationsCallback = new RemoteCertificateValidationCallback(AcceptAllCertifications);
+            AcceptAllCertificationsCallback = AcceptAllCertifications;
         }
 
 

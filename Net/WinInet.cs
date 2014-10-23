@@ -152,16 +152,13 @@ namespace xNet.Net
         {
             using (RegistryKey regKey = Registry.CurrentUser.OpenSubKey(PathToInternetOptions))
             {
-                object value = regKey.GetValue("ProxyEnable");
+                var value = regKey.GetValue("ProxyEnable");
 
                 if (value == null)
                 {
                     return false;
                 }
-                else
-                {
-                    return ((int)value == 0) ? false : true;
-                }
+                return ((int)value != 0);
             }
         }
 

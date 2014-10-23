@@ -26,7 +26,7 @@ namespace xNet.Net
         {
             get
             {
-                return ((double)BytesSent / (double)TotalBytesToSend) * 100.0;
+                return (BytesSent / (double)TotalBytesToSend) * 100.0;
             }
         }
 

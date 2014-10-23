@@ -136,11 +136,11 @@ namespace xNet.Net
                 }
                 else
                 {
-                    int index = 0;
+                    var index = 0;
 
                     while (count > 0)
                     {
-                        int bytesWrite = 0;
+                        var bytesWrite = 0;
 
                         if (count >= _sendBufferSize)
                         {
@@ -176,7 +176,7 @@ namespace xNet.Net
         #region Статические поля (закрытые)
 
         // Заголовки, которые можно задать только с помощью специального свойства/метода.
-        private static readonly List<string> _closedHeaders = new List<string>()
+        private static readonly List<string> _closedHeaders = new List<string>
         {
             "Accept-Encoding",
             "Authorization",

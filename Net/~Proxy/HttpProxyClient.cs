@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -87,11 +86,8 @@ namespace xNet.Net
                 result = proxy as HttpProxyClient;
                 return true;
             }
-            else
-            {
-                result = null;
-                return false;
-            }
+            result = null;
+            return false;
         }
 
         #endregion
@@ -156,7 +152,7 @@ namespace xNet.Net
 
                 try
                 {
-                    NetworkStream nStream = curTcpClient.GetStream();
+                    var nStream = curTcpClient.GetStream();
 
                     SendConnectionCommand(nStream, destinationHost, destinationPort);
                     statusCode = ReceiveResponse(nStream);

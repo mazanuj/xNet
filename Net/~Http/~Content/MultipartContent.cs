@@ -128,7 +128,7 @@ namespace xNet.Net
 
             #endregion
 
-            var element = new Element()
+            var element = new Element
             {
                 Name = name,
                 Content = content
@@ -181,7 +181,7 @@ namespace xNet.Net
             content.ContentType = HttpHelper.DetermineMediaType(
                 Path.GetExtension(fileName));
 
-            var element = new Element()
+            var element = new Element
             {
                 Name = name,
                 FileName = fileName,

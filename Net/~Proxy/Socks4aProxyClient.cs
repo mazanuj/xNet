@@ -76,11 +76,8 @@ namespace xNet.Net
                 result = proxy as Socks4aProxyClient;
                 return true;
             }
-            else
-            {
-                result = null;
-                return false;
-            }
+            result = null;
+            return false;
         }
 
         #endregion
