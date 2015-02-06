@@ -82,8 +82,7 @@ namespace xNet.Net
 
         #endregion
 
-
-        internal protected override void SendCommand(NetworkStream nStream, byte command, string destinationHost, int destinationPort)
+        protected override void SendCommand(NetworkStream nStream, byte command, string destinationHost, int destinationPort)
         {
             byte[] dstPort = GetPortBytes(destinationPort);
             byte[] dstIp = { 0, 0, 0, 1 };

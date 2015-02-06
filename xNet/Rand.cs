@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Linq;
+using System.Text;
 
-namespace xNet
+namespace xNet.xNet
 {
     /// <summary>
     /// Представляет генератор псевдослучайных чисел и строк.

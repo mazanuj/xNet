@@ -139,7 +139,7 @@ namespace xNet.Net
 
             #endregion
 
-            TcpClient curTcpClient = tcpClient;
+            var curTcpClient = tcpClient;
 
             if (curTcpClient == null)
             {
@@ -148,7 +148,7 @@ namespace xNet.Net
 
             if (destinationPort != 80)
             {
-                HttpStatusCode statusCode = HttpStatusCode.OK;
+                var statusCode = HttpStatusCode.OK;
 
                 try
                 {
@@ -190,7 +190,7 @@ namespace xNet.Net
         {
             if (!string.IsNullOrEmpty(_username) || !string.IsNullOrEmpty(_password))
             {
-                string data = Convert.ToBase64String(Encoding.UTF8.GetBytes(
+                var data = Convert.ToBase64String(Encoding.UTF8.GetBytes(
                     string.Format("{0}:{1}", _username, _password)));
 
                 return string.Format("Proxy-Authorization: Basic {0}\r\n", data);
@@ -199,7 +199,7 @@ namespace xNet.Net
             return string.Empty;
         }
 
-        private void SendConnectionCommand(NetworkStream nStream, string destinationHost, int destinationPort)
+        private void SendConnectionCommand(Stream nStream, string destinationHost, int destinationPort)
         {
             var commandBuilder = new StringBuilder();
 
@@ -207,25 +207,25 @@ namespace xNet.Net
             commandBuilder.AppendFormat(GenerateAuthorizationHeader());
             commandBuilder.AppendLine();
 
-            byte[] buffer = Encoding.ASCII.GetBytes(commandBuilder.ToString());
+            var buffer = Encoding.ASCII.GetBytes(commandBuilder.ToString());
 
             nStream.Write(buffer, 0, buffer.Length);
         }
 
         private HttpStatusCode ReceiveResponse(NetworkStream nStream)
         {
-            byte[] buffer = new byte[BufferSize];
+            var buffer = new byte[BufferSize];
             var responseBuilder = new StringBuilder();
 
             WaitData(nStream);
 
             do
             {
-                int bytesRead = nStream.Read(buffer, 0, BufferSize);
+                var bytesRead = nStream.Read(buffer, 0, BufferSize);
                 responseBuilder.Append(Encoding.ASCII.GetString(buffer, 0, bytesRead));
             } while (nStream.DataAvailable);
 
-            string response = responseBuilder.ToString();
+            var response = responseBuilder.ToString();
 
             if (response.Length == 0)
             {
@@ -233,23 +233,23 @@ namespace xNet.Net
             }
 
             // Выделяем строку статуса. Пример: HTTP/1.1 200 OK\r\n
-            string strStatus = response.Substring(" ", HttpHelper.NewLine);
+            var strStatus = response.Substring(" ", HttpHelper.NewLine);
 
-            int simPos = strStatus.IndexOf(' ');
+            var simPos = strStatus.IndexOf(' ');
 
             if (simPos == -1)
             {
                 throw NewProxyException(Resources.ProxyException_ReceivedWrongResponse);
             }
 
-            string statusLine = strStatus.Substring(0, simPos);
+            var statusLine = strStatus.Substring(0, simPos);
 
             if (statusLine.Length == 0)
             {
                 throw NewProxyException(Resources.ProxyException_ReceivedWrongResponse);
             }
 
-            HttpStatusCode statusCode = (HttpStatusCode)Enum.Parse(
+            var statusCode = (HttpStatusCode)Enum.Parse(
                 typeof(HttpStatusCode), statusLine);
 
             return statusCode;
@@ -257,8 +257,8 @@ namespace xNet.Net
 
         private void WaitData(NetworkStream nStream)
         {
-            int sleepTime = 0;
-            int delay = (nStream.ReadTimeout < 10) ?
+            var sleepTime = 0;
+            var delay = (nStream.ReadTimeout < 10) ?
                 10 : nStream.ReadTimeout;
 
             while (!nStream.DataAvailable)

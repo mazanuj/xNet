@@ -24,8 +24,8 @@ namespace xNet.Net
         {
             #region Поля (закрытые)
 
-            private Stream _baseStream;
-            private int _sendBufferSize;
+            private readonly Stream _baseStream;
+            private readonly int _sendBufferSize;
 
             #endregion
 
