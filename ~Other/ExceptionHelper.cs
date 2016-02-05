@@ -14,14 +14,14 @@ namespace xNet
         internal static ArgumentOutOfRangeException CanNotBeLess<T>(string paramName, T value) where T : struct
         {
             return new ArgumentOutOfRangeException(paramName, string.Format(
-                    Resources.ArgumentOutOfRangeException_CanNotBeLess, value));
+                Resources.ArgumentOutOfRangeException_CanNotBeLess, value));
         }
 
         internal static ArgumentOutOfRangeException CanNotBeGreater<T>(string paramName, T value) where T : struct
         {
             return new ArgumentOutOfRangeException(paramName, string.Format(
-                    Resources.ArgumentOutOfRangeException_CanNotBeGreater, value));
-        } 
+                Resources.ArgumentOutOfRangeException_CanNotBeGreater, value));
+        }
 
         internal static ArgumentException WrongPath(string paramName, Exception innerException = null)
         {
@@ -30,18 +30,13 @@ namespace xNet
 
         internal static ArgumentOutOfRangeException WrongTcpPort(string paramName)
         {
-            return new ArgumentOutOfRangeException("port", string.Format(
+            return new ArgumentOutOfRangeException(nameof(paramName), string.Format(
                 Resources.ArgumentOutOfRangeException_CanNotBeLessOrGreater, 1, 65535));
         }
 
         internal static bool ValidateTcpPort(int port)
         {
-            if (port < 1 || port > 65535)
-            {
-                return false;
-            }
-
-            return true;
+            return port >= 1 && port <= 65535;
         }
 
         #endregion

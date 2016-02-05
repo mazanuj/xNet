@@ -160,7 +160,7 @@ namespace xNet.Net
 
             #endregion
 
-            TcpClient curTcpClient = tcpClient;
+            var curTcpClient = tcpClient;
 
             if (curTcpClient == null)
             {
@@ -169,7 +169,7 @@ namespace xNet.Net
 
             try
             {
-                NetworkStream nStream = curTcpClient.GetStream();
+                var nStream = curTcpClient.GetStream();
 
                 InitialNegotiation(nStream);
                 SendCommand(nStream, CommandConnect, destinationHost, destinationPort);
@@ -192,7 +192,7 @@ namespace xNet.Net
 
         #region Методы (закрытые)
 
-        private void InitialNegotiation(NetworkStream nStream)
+        private void InitialNegotiation(Stream nStream)
         {
             byte authMethod;
 
@@ -210,7 +210,7 @@ namespace xNet.Net
             // +----+----------+----------+
             // | 1  |    1     | 1 to 255 |
             // +----+----------+----------+
-            byte[] request = new byte[3];
+            var request = new byte[3];
 
             request[0] = VersionNumber;
             request[1] = 1;
@@ -223,11 +223,11 @@ namespace xNet.Net
             // +----+--------+
             // | 1  |   1    |
             // +----+--------+
-            byte[] response = new byte[2];
+            var response = new byte[2];
 
             nStream.Read(response, 0, response.Length);
 
-            byte reply = response[1];
+            var reply = response[1];
 
             if (authMethod == AuthMethodUsernamePassword && reply == AuthMethodUsernamePassword)
             {
@@ -239,12 +239,12 @@ namespace xNet.Net
             }
         }
 
-        private void SendUsernameAndPassword(NetworkStream nStream)
+        private void SendUsernameAndPassword(Stream nStream)
         {
-            byte[] uname = string.IsNullOrEmpty(_username) ?
+            var uname = string.IsNullOrEmpty(_username) ?
                 new byte[0] : Encoding.ASCII.GetBytes(_username);
 
-            byte[] passwd = string.IsNullOrEmpty(_password) ?
+            var passwd = string.IsNullOrEmpty(_password) ?
                 new byte[0] : Encoding.ASCII.GetBytes(_password);
 
             // +----+------+----------+------+----------+
@@ -252,7 +252,7 @@ namespace xNet.Net
             // +----+------+----------+------+----------+
             // | 1  |  1   | 1 to 255 |  1   | 1 to 255 |
             // +----+------+----------+------+----------+
-            byte[] request = new byte[uname.Length + passwd.Length + 3];
+            var request = new byte[uname.Length + passwd.Length + 3];
 
             request[0] = 1;
             request[1] = (byte)uname.Length;
@@ -267,11 +267,11 @@ namespace xNet.Net
             // +----+--------+
             // | 1  |   1    |
             // +----+--------+
-            byte[] response = new byte[2];
+            var response = new byte[2];
 
             nStream.Read(response, 0, response.Length);
 
-            byte reply = response[1];
+            var reply = response[1];
 
             if (reply != CommandReplySucceeded)
             {
@@ -279,18 +279,18 @@ namespace xNet.Net
             }
         }
 
-        private void SendCommand(NetworkStream nStream, byte command, string destinationHost, int destinationPort)
+        private void SendCommand(Stream nStream, byte command, string destinationHost, int destinationPort)
         {
-            byte aTyp = GetAddressType(destinationHost);
-            byte[] dstAddr = GetAddressBytes(aTyp, destinationHost);
-            byte[] dstPort = GetPortBytes(destinationPort);
+            var aTyp = GetAddressType(destinationHost);
+            var dstAddr = GetAddressBytes(aTyp, destinationHost);
+            var dstPort = GetPortBytes(destinationPort);
 
             // +----+-----+-------+------+----------+----------+
             // |VER | CMD |  RSV  | ATYP | DST.ADDR | DST.PORT |
             // +----+-----+-------+------+----------+----------+
             // | 1  |  1  | X'00' |  1   | Variable |    2     |
             // +----+-----+-------+------+----------+----------+
-            byte[] request = new byte[4 + dstAddr.Length + 2];
+            var request = new byte[4 + dstAddr.Length + 2];
 
             request[0] = VersionNumber;
             request[1] = command;
@@ -306,11 +306,11 @@ namespace xNet.Net
             // +----+-----+-------+------+----------+----------+
             // | 1  |  1  | X'00' |  1   | Variable |    2     |
             // +----+-----+-------+------+----------+----------+
-            byte[] response = new byte[255];
+            var response = new byte[255];
 
             nStream.Read(response, 0, response.Length);
 
-            byte reply = response[1];
+            var reply = response[1];
 
             // Если запрос не выполнен.
             if (reply != CommandReplySucceeded)
@@ -321,7 +321,7 @@ namespace xNet.Net
 
         private byte GetAddressType(string host)
         {
-            IPAddress ipAddr = null;
+            IPAddress ipAddr;
 
             if (!IPAddress.TryParse(host, out ipAddr))
             {
@@ -343,7 +343,7 @@ namespace xNet.Net
 
         }
 
-        private byte[] GetAddressBytes(byte addressType, string host)
+        private static byte[] GetAddressBytes(byte addressType, string host)
         {
             switch (addressType)
             {
@@ -352,7 +352,7 @@ namespace xNet.Net
                     return IPAddress.Parse(host).GetAddressBytes();
 
                 case AddressTypeDomainName:
-                    byte[] bytes = new byte[host.Length + 1];
+                    var bytes = new byte[host.Length + 1];
 
                     bytes[0] = (byte)host.Length;
                     Encoding.ASCII.GetBytes(host).CopyTo(bytes, 1);
@@ -364,9 +364,9 @@ namespace xNet.Net
             }
         }
 
-        private byte[] GetPortBytes(int port)
+        private static byte[] GetPortBytes(int port)
         {
-            byte[] array = new byte[2];
+            var array = new byte[2];
 
             array[0] = (byte)(port / 256);
             array[1] = (byte)(port % 256);
@@ -421,7 +421,7 @@ namespace xNet.Net
                     break;
             }
 
-            string exceptionMsg = string.Format(
+            var exceptionMsg = string.Format(
                 Resources.ProxyException_CommandError, errorMessage, ToString());
 
             throw new ProxyException(exceptionMsg, this);

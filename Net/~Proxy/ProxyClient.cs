@@ -38,7 +38,7 @@ namespace xNet.Net
         /// <summary>
         /// Возвращает тип прокси-сервера.
         /// </summary>
-        public virtual ProxyType Type
+        public ProxyType Type
         {
             get
             {
@@ -269,7 +269,7 @@ namespace xNet.Net
         /// <exception cref="System.ArgumentException">Значение параметра <paramref name="proxyAddress"/> является пустой строкой.</exception>
         /// <exception cref="System.FormatException">Формат порта является неправильным.</exception>
         /// <exception cref="System.InvalidOperationException">Получен неподдерживаемый тип прокси-сервера.</exception>
-        public static ProxyClient Parse(ProxyType proxyType, string proxyAddress)
+        protected static ProxyClient Parse(ProxyType proxyType, string proxyAddress)
         {
             #region Проверка параметров
 
@@ -285,10 +285,10 @@ namespace xNet.Net
 
             #endregion
 
-            string[] values = proxyAddress.Split(':');
+            var values = proxyAddress.Split(':');
 
-            int port = 0;
-            string host = values[0];
+            var port = 0;
+            var host = values[0];
 
             if (values.Length >= 2)
             {
@@ -341,7 +341,7 @@ namespace xNet.Net
         /// <param name="proxyAddress">Строка вида - хост:порт:имя_пользователя:пароль. Три последних параметра являются необязательными.</param>
         /// <param name="result">Если преобразование выполнено успешно, то содержит экземпляр класса прокси-клиента, унаследованный от <see cref="ProxyClient"/>, иначе <see langword="null"/>.</param>
         /// <returns>Значение <see langword="true"/>, если параметр <paramref name="proxyAddress"/> преобразован успешно, иначе <see langword="false"/>.</returns>
-        public static bool TryParse(ProxyType proxyType, string proxyAddress, out ProxyClient result)
+        protected static bool TryParse(ProxyType proxyType, string proxyAddress, out ProxyClient result)
         {
             result = null;
 
@@ -354,10 +354,10 @@ namespace xNet.Net
 
             #endregion
 
-            string[] values = proxyAddress.Split(':');
+            var values = proxyAddress.Split(':');
 
-            int port = 0;
-            string host = values[0];
+            var port = 0;
+            var host = values[0];
 
             if (values.Length >= 2)
             {
@@ -426,14 +426,14 @@ namespace xNet.Net
         /// <returns>Строка вида - хост:порт, представляющая адрес прокси-сервера.</returns>
         public override string ToString()
         {
-            return string.Format("{0}:{1}", _host, _port);
+            return $"{_host}:{_port}";
         }
 
         /// <summary>
         /// Формирует строку вида - хост:порт:имя_пользователя:пароль. Последние два параметра добавляются, если они заданы.
         /// </summary>
         /// <returns>Строка вида - хост:порт:имя_пользователя:пароль.</returns>
-        public virtual string ToExtendedString()
+        public string ToExtendedString()
         {
             var strBuilder = new StringBuilder();
 
@@ -516,33 +516,30 @@ namespace xNet.Net
         /// <exception cref="xNet.Net.ProxyException">Ошибка при работе с прокси-сервером.</exception>
         protected TcpClient CreateConnectionToProxy()
         {
-            TcpClient tcpClient = null;
-
             #region Создание подключения
 
-            tcpClient = new TcpClient();
+            var tcpClient = new TcpClient();
             Exception connectException = null;
-            ManualResetEventSlim connectDoneEvent = new ManualResetEventSlim();
+            var connectDoneEvent = new ManualResetEventSlim();
 
             try
             {
-                tcpClient.BeginConnect(_host, _port, new AsyncCallback(
-                    (ar) =>
+                tcpClient.BeginConnect(_host, _port, ar =>
+                {
+                    if (tcpClient.Client != null)
                     {
-                        if (tcpClient.Client != null)
+                        try
                         {
-                            try
-                            {
-                                tcpClient.EndConnect(ar);
-                            }
-                            catch (Exception ex)
-                            {
-                                connectException = ex;
-                            }
-
-                            connectDoneEvent.Set();
+                            tcpClient.EndConnect(ar);
                         }
-                    }), tcpClient
+                        catch (Exception ex)
+                        {
+                            connectException = ex;
+                        }
+
+                        connectDoneEvent.Set();
+                    }
+                }, tcpClient
                 );
             }
             #region Catch's

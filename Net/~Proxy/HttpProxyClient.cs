@@ -77,17 +77,16 @@ namespace xNet.Net
         /// <param name="proxyAddress">Строка вида - хост:порт:имя_пользователя:пароль. Три последних параметра являются необязательными.</param>
         /// <param name="result">Если преобразование выполнено успешно, то содержит экземпляр класса <see cref="HttpProxyClient"/>, иначе <see langword="null"/>.</param>
         /// <returns>Значение <see langword="true"/>, если параметр <paramref name="proxyAddress"/> преобразован успешно, иначе <see langword="false"/>.</returns>
-        public static bool TryParse(string proxyAddress, out HttpProxyClient result)
+        public static void TryParse(string proxyAddress, out HttpProxyClient result)
         {
             ProxyClient proxy;
 
             if (TryParse(ProxyType.Http, proxyAddress, out proxy))
             {
                 result = proxy as HttpProxyClient;
-                return true;
+                return;
             }
             result = null;
-            return false;
         }
 
         #endregion
@@ -139,16 +138,11 @@ namespace xNet.Net
 
             #endregion
 
-            var curTcpClient = tcpClient;
-
-            if (curTcpClient == null)
-            {
-                curTcpClient = CreateConnectionToProxy();
-            }
+            var curTcpClient = tcpClient ?? CreateConnectionToProxy();
 
             if (destinationPort != 80)
             {
-                var statusCode = HttpStatusCode.OK;
+                HttpStatusCode statusCode;
 
                 try
                 {
@@ -191,9 +185,9 @@ namespace xNet.Net
             if (!string.IsNullOrEmpty(_username) || !string.IsNullOrEmpty(_password))
             {
                 var data = Convert.ToBase64String(Encoding.UTF8.GetBytes(
-                    string.Format("{0}:{1}", _username, _password)));
+                    $"{_username}:{_password}"));
 
-                return string.Format("Proxy-Authorization: Basic {0}\r\n", data);
+                return $"Proxy-Authorization: Basic {data}\r\n";
             }
 
             return string.Empty;

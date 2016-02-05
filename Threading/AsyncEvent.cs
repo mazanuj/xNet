@@ -54,7 +54,7 @@ namespace xNet.Threading
         /// <param name="eventArgs">Аргументы события.</param>
         public void On(object sender, TEventArgs eventArgs)
         {
-            EventHandler<TEventArgs> handler = EventHandler;
+            var handler = EventHandler;
 
             if (handler != null)
             {

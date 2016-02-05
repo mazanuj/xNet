@@ -106,16 +106,16 @@ namespace xNet.Net
 
             encoding = encoding ?? Encoding.UTF8;
 
-            byte[] bytes = encoding.GetBytes(str);
+            var bytes = encoding.GetBytes(str);
 
-            int spaceCount = 0;
-            int otherCharCount = 0;
+            var spaceCount = 0;
+            var otherCharCount = 0;
 
             #region Подсчёт символов
 
-            for (int i = 0; i < bytes.Length; i++)
+            for (var i = 0; i < bytes.Length; i++)
             {
-                char c = (char)bytes[i];
+                var c = (char)bytes[i];
 
                 if (c == ' ')
                 {
@@ -135,12 +135,12 @@ namespace xNet.Net
                 return str;
             }
 
-            int bufferIndex = 0;
-            byte[] buffer = new byte[bytes.Length + (otherCharCount * 2)];
+            var bufferIndex = 0;
+            var buffer = new byte[bytes.Length + (otherCharCount * 2)];
 
-            for (int i = 0; i < bytes.Length; i++)
+            for (var i = 0; i < bytes.Length; i++)
             {
-                char c = (char)bytes[i];
+                var c = (char)bytes[i];
 
                 if (IsUrlSafeChar(c))
                 {
@@ -273,7 +273,7 @@ namespace xNet.Net
         /// <returns>MIME-тип.</returns>
         public static string DetermineMediaType(string extension)
         {
-            string mediaType = "application/octet-stream";
+            var mediaType = "application/octet-stream";
 
             try
             {
@@ -281,7 +281,7 @@ namespace xNet.Net
                 {
                     if (regKey != null)
                     {
-                        object keyValue = regKey.GetValue("Content Type");
+                        var keyValue = regKey.GetValue("Content Type");
 
                         if (keyValue != null)
                         {
@@ -310,11 +310,11 @@ namespace xNet.Net
         /// <returns>Случайный User-Agent от браузера IE.</returns>
         public static string IEUserAgent()
         {
-            string windowsVersion = RandomWindowsVersion();
+            var windowsVersion = RandomWindowsVersion();
 
             string version = null;
             string mozillaVersion = null;
-            string otherParams = null;
+            string otherParams;
 
             #region Генерация случайной версии
 
@@ -350,9 +350,8 @@ namespace xNet.Net
 
             #endregion
 
-            return string.Format(
-                "Mozilla/{0} (compatible; MSIE {1}; {2}; Trident/5.0; {3})",
-                mozillaVersion, version, windowsVersion, otherParams);
+            return
+                $"Mozilla/{mozillaVersion} (compatible; MSIE {version}; {windowsVersion}; Trident/5.0; {otherParams})";
         }
 
         /// <summary>
@@ -401,9 +400,7 @@ namespace xNet.Net
 
             #endregion
 
-            return string.Format(
-                "Opera/9.80 ({0}); U) Presto/{1} Version/{2}",
-                RandomWindowsVersion(), presto, version);
+            return $"Opera/9.80 ({RandomWindowsVersion()}); U) Presto/{presto} Version/{version}";
         }
 
         /// <summary>
@@ -447,9 +444,8 @@ namespace xNet.Net
 
             #endregion
 
-            return string.Format(
-                "Mozilla/5.0 ({0}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/{1} Safari/{2}",
-                RandomWindowsVersion(), version, safari);
+            return
+                $"Mozilla/5.0 ({RandomWindowsVersion()}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/{version} Safari/{safari}";
         }
 
         /// <summary>
@@ -537,9 +533,7 @@ namespace xNet.Net
 
             #endregion
 
-            return string.Format(
-                "Opera/9.80 ({0}; Opera Mini/{1}/28.2555; U; ru) Presto/{2} Version/{3}",
-                os, miniVersion, presto, version);
+            return $"Opera/9.80 ({os}; Opera Mini/{miniVersion}/28.2555; U; ru) Presto/{presto} Version/{version}";
         }
 
         #endregion
@@ -593,7 +587,7 @@ namespace xNet.Net
 
         private static string RandomWindowsVersion()
         {
-            string windowsVersion = "Windows NT ";
+            var windowsVersion = "Windows NT ";
 
             switch (Rand.Next(4))
             {

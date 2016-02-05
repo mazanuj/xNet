@@ -12,12 +12,12 @@ namespace xNet.Net
         /// <summary>
         /// Возвращает количество отправленных байтов.
         /// </summary>
-        public long BytesSent { get; private set; }
+        public long BytesSent { get; }
 
         /// <summary>
         /// Возвращает общее количество отправляемых байтов.
         /// </summary>
-        public long TotalBytesToSend { get; private set; }
+        public long TotalBytesToSend { get; }
 
         /// <summary>
         /// Возвращает процент отправленных байтов.

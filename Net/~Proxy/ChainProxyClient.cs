@@ -10,9 +10,9 @@ namespace xNet.Net
     /// <summary>
     /// Представляет цепочку из различных прокси-серверов.
     /// </summary>
-    public class ChainProxyClient : ProxyClient
+    public abstract class ChainProxyClient : ProxyClient
     {
-        private List<ProxyClient> _proxies = new List<ProxyClient>();
+        private readonly List<ProxyClient> _proxies = new List<ProxyClient>();
 
 
         #region Свойства (открытые)
@@ -20,18 +20,12 @@ namespace xNet.Net
         /// <summary>
         /// Возвращает или задает значение, указывающие, нужно ли перемешивать список цепочки прокси-серверов, перед созданием нового подключения.
         /// </summary>
-        public bool EnableShuffle { get; set; }
+        private bool EnableShuffle { get; }
 
         /// <summary>
         /// Возвращает список цепочки прокси-серверов.
         /// </summary>
-        public List<ProxyClient> Proxies
-        {
-            get
-            {
-                return _proxies;
-            }
-        }
+        public IEnumerable<ProxyClient> Proxies => _proxies;
 
         #region Переопределённые
 
@@ -190,11 +184,11 @@ namespace xNet.Net
                 proxies = _proxies.ToList();
 
                 // Перемешиваем прокси.
-                for (int i = 0; i < proxies.Count; i++)
+                for (var i = 0; i < proxies.Count; i++)
                 {
-                    int randI = Rand.Next(proxies.Count);
+                    var randI = Rand.Next(proxies.Count);
 
-                    ProxyClient proxy = proxies[i];
+                    var proxy = proxies[i];
                     proxies[i] = proxies[randI];
                     proxies[randI] = proxy;
                 }
@@ -204,10 +198,10 @@ namespace xNet.Net
                 proxies = _proxies;
             }
 
-            int length = proxies.Count - 1;
-            TcpClient curTcpClient = tcpClient;
+            var length = proxies.Count - 1;
+            var curTcpClient = tcpClient;
 
-            for (int i = 0; i < length; i++)
+            for (var i = 0; i < length; i++)
             {
                 curTcpClient = proxies[i].CreateConnection(
                     proxies[i + 1].Host, proxies[i + 1].Port, curTcpClient);

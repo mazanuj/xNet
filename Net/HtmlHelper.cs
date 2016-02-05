@@ -40,7 +40,7 @@ namespace xNet.Net
 
             var regex = new Regex(@"(\&(?<text>\w{1,4})\;)|(\&#(?<code>\w{1,4})\;)", RegexOptions.Compiled);
 
-            string result = regex.Replace(str, match =>
+            var result = regex.Replace(str, match =>
             {
                 if (match.Groups["text"].Success)
                 {
@@ -53,7 +53,7 @@ namespace xNet.Net
                 }
                 else if (match.Groups["code"].Success)
                 {
-                    int code = int.Parse(match.Groups["code"].Value);
+                    var code = int.Parse(match.Groups["code"].Value);
                     return ((char)code).ToString();
                 }
 
@@ -78,9 +78,9 @@ namespace xNet.Net
 
             var regex = new Regex(@"\\[uU](?<text>[0-9A-F]{4})", RegexOptions.Compiled);
 
-            string result = regex.Replace(str, match =>
+            var result = regex.Replace(str, match =>
             {
-                int code = int.Parse(match.Groups["code"].Value, NumberStyles.HexNumber);
+                var code = int.Parse(match.Groups["code"].Value, NumberStyles.HexNumber);
 
                 return ((char)code).ToString();
             });

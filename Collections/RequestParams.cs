@@ -32,7 +32,7 @@ namespace xNet.Collections
 
                 #endregion
 
-                string str = (value == null ? string.Empty : value.ToString());
+                var str = (value == null ? string.Empty : value.ToString());
 
                 Add(new KeyValuePair<string, string>(paramName, str));
             }

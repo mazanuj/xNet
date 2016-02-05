@@ -17,7 +17,7 @@ namespace xNet.Net
     /// <summary>
     /// Представляет класс, предназначеннный для отправки запросов HTTP-серверу.
     /// </summary>
-    public class HttpRequest : IDisposable
+    public sealed class HttpRequest : IDisposable
     {
         // Используется для определения того, сколько байт было отправлено/считано.
         private sealed class HttpWraperStream : Stream
@@ -118,7 +118,7 @@ namespace xNet.Net
 
             public override int Read(byte[] buffer, int offset, int count)
             {
-                int bytesRead = _baseStream.Read(buffer, offset, count);
+                var bytesRead = _baseStream.Read(buffer, offset, count);
 
                 if (BytesReadCallback != null)
                 {
@@ -140,7 +140,7 @@ namespace xNet.Net
 
                     while (count > 0)
                     {
-                        var bytesWrite = 0;
+                        int bytesWrite;
 
                         if (count >= _sendBufferSize)
                         {
@@ -227,7 +227,7 @@ namespace xNet.Net
         private int _connectTimeout = 60000;
         private int _readWriteTimeout = 60000;
 
-        private int _redirectionCount = 0;
+        private int _redirectionCount;
         private int _maximumAutomaticRedirections = 5;
 
         private HttpContent _content; // Отправляемые данные.
@@ -299,7 +299,7 @@ namespace xNet.Net
         /// Возвращает или задаёт URI интернет-ресурса, который используется, если в запросе указан относительный адрес.
         /// </summary>
         /// <value>Значение по умолчанию — <see langword="null"/>.</value>
-        public Uri BaseAddress { get; set; }
+        public Uri BaseAddress { get; }
 
         /// <summary>
         /// Возвращает URI интернет-ресурса, который фактически отвечает на запрос.
@@ -1483,7 +1483,7 @@ namespace xNet.Net
         /// <exception cref="System.ArgumentNullException">Значение параметра <paramref name="name"/> равно <see langword="null"/>.</exception>
         /// <exception cref="System.ArgumentException">Значение параметра <paramref name="name"/> является пустой строкой.</exception>
         /// <remarks>Данный параметр будет стёрт после первого запроса.</remarks>
-        public HttpRequest AddParam(string name, object value = null)
+        public void AddParam(string name, object value = null)
         {
             #region Проверка параметров
 
@@ -1505,8 +1505,6 @@ namespace xNet.Net
             }
 
             _addedParams[name] = value;
-
-            return this;
         }
 
         /// <summary>
@@ -1556,7 +1554,7 @@ namespace xNet.Net
 
             #endregion
 
-            string contentValue = (value == null ? string.Empty : value.ToString());
+            var contentValue = (value == null ? string.Empty : value.ToString());
 
             AddedMultipartData.Add(new StringContent(contentValue, encoding), name);
 
@@ -1868,13 +1866,13 @@ namespace xNet.Net
         /// Установка значения HTTP-заголовка, который должен задаваться с помощью специального свойства/метода.
         /// </exception>
         /// <remarks>Данный HTTP-заголовок будет стёрт после первого запроса.</remarks>
-        public HttpRequest AddHeader(string name, string value)
+        public void AddHeader(string name, string value)
         {
             #region Проверка параметров
 
             if (name == null)
             {
-                throw new ArgumentNullException("name");
+                throw new ArgumentNullException(nameof(name));
             }
 
             if (name.Length == 0)
@@ -1906,8 +1904,6 @@ namespace xNet.Net
             }
 
             _addedHeaders[name] = value;
-
-            return this;
         }
 
         /// <summary>
@@ -1922,11 +1918,9 @@ namespace xNet.Net
         /// Установка значения HTTP-заголовка, который должен задаваться с помощью специального свойства/метода.
         /// </exception>
         /// <remarks>Данный HTTP-заголовок будет стёрт после первого запроса.</remarks>
-        public HttpRequest AddHeader(HttpHeader header, string value)
+        public void AddHeader(HttpHeader header, string value)
         {
             AddHeader(HttpHelper.HttpHeaders[header], value);
-
-            return this;
         }
 
         #endregion
@@ -2028,7 +2022,7 @@ namespace xNet.Net
         /// Освобождает неуправляемые (а при необходимости и управляемые) ресурсы, используемые объектом <see cref="HttpRequest"/>.
         /// </summary>
         /// <param name="disposing">Значение <see langword="true"/> позволяет освободить управляемые и неуправляемые ресурсы; значение <see langword="false"/> позволяет освободить только неуправляемые ресурсы.</param>
-        protected virtual void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             if (disposing && _tcpClient != null)
             {
@@ -2043,9 +2037,9 @@ namespace xNet.Net
         /// Вызывает событие <see cref="UploadProgressChanged"/>.
         /// </summary>
         /// <param name="e">Аргументы события.</param>
-        protected virtual void OnUploadProgressChanged(UploadProgressChangedEventArgs e)
+        private void OnUploadProgressChanged(UploadProgressChangedEventArgs e)
         {
-            EventHandler<UploadProgressChangedEventArgs> eventHandler = _uploadProgressChangedHandler;
+            var eventHandler = _uploadProgressChangedHandler;
 
             if (eventHandler != null)
             {
@@ -2057,9 +2051,9 @@ namespace xNet.Net
         /// Вызывает событие <see cref="DownloadProgressChanged"/>.
         /// </summary>
         /// <param name="e">Аргументы события.</param>
-        protected virtual void OnDownloadProgressChanged(DownloadProgressChangedEventArgs e)
+        private void OnDownloadProgressChanged(DownloadProgressChangedEventArgs e)
         {
-            EventHandler<DownloadProgressChangedEventArgs> eventHandler = _downloadProgressChangedHandler;
+            var eventHandler = _downloadProgressChangedHandler;
 
             if (eventHandler != null)
             {
@@ -2086,7 +2080,7 @@ namespace xNet.Net
 
         private Uri CreateAbsoluteAddress(Uri relativeAddress)
         {
-            string address = relativeAddress.ToString();
+            var address = relativeAddress.ToString();
 
             if (address[0] != '/')
             {
@@ -2094,7 +2088,7 @@ namespace xNet.Net
             }
 
             var uriBuilder = new UriBuilder();
-            string[] pathAndQueryValues = address.Split('?');
+            var pathAndQueryValues = address.Split('?');
 
             uriBuilder.Path = pathAndQueryValues[0];
 
@@ -2135,9 +2129,9 @@ namespace xNet.Net
                 }
             }
 
-            bool createdNewConnection = false;
+            var createdNewConnection = false;
 
-            ProxyClient proxy = GetProxy();
+            var proxy = GetProxy();
 
             // Если нужно создать новое подключение.
             if (_tcpClient == null || Address.Port != address.Port ||
@@ -2171,8 +2165,8 @@ namespace xNet.Net
                     _contentLength = _content.CalculateContentLength();
                 }
 
-                byte[] startingLineBytes = Encoding.ASCII.GetBytes(GenerateStartingLine(method));
-                byte[] headersBytes = Encoding.ASCII.GetBytes(GenerateHeaders(method));
+                var startingLineBytes = Encoding.ASCII.GetBytes(GenerateStartingLine(method));
+                var headersBytes = Encoding.ASCII.GetBytes(GenerateHeaders());
 
                 _bytesSent = 0;
                 _totalBytesSent = startingLineBytes.Length + headersBytes.Length + _contentLength;
@@ -2285,7 +2279,7 @@ namespace xNet.Net
                 try
                 {
                     var checkIp = IPAddress.Parse("127.0.0.1");
-                    IPAddress[] ips = Dns.GetHostAddresses(Address.Host);
+                    var ips = Dns.GetHostAddresses(Address.Host);
 
                     foreach (var ip in ips)
                     {
@@ -2307,7 +2301,7 @@ namespace xNet.Net
                 }
             }
 
-            ProxyClient proxy = Proxy ?? GlobalProxy;
+            var proxy = Proxy ?? GlobalProxy;
 
             if (proxy == null && UseIeProxy && !WinInet.InternetConnected)
             {
@@ -2332,20 +2326,19 @@ namespace xNet.Net
 
                 try
                 {
-                    tcpClient.BeginConnect(host, port, new AsyncCallback(
-                        (ar) =>
+                    tcpClient.BeginConnect(host, port, ar =>
+                    {
+                        try
                         {
-                            try
-                            {
-                                tcpClient.EndConnect(ar);
-                            }
-                            catch (Exception ex)
-                            {
-                                connectException = ex;
-                            }
+                            tcpClient.EndConnect(ar);
+                        }
+                        catch (Exception ex)
+                        {
+                            connectException = ex;
+                        }
 
-                            connectDoneEvent.Set();
-                        }), tcpClient
+                        connectDoneEvent.Set();
+                    }, tcpClient
                     );
                 }
                 #region Catch's
@@ -2486,26 +2479,25 @@ namespace xNet.Net
                 query = Address.PathAndQuery;
             }
 
-            return string.Format("{0} {1} HTTP/{2}\r\n",
-                method, query, ProtocolVersion);
+            return $"{method} {query} HTTP/{ProtocolVersion}\r\n";
         }
 
         #region Работа с заголовками
 
         private string GetAuthorizationHeaderValue()
         {
-            string data = Convert.ToBase64String(Encoding.UTF8.GetBytes(
-                string.Format("{0}:{1}", Username, Password)));
+            var data = Convert.ToBase64String(Encoding.UTF8.GetBytes(
+                $"{Username}:{Password}"));
 
-            return string.Format("Basic {0}", data);
+            return $"Basic {data}";
         }
 
-        private string GetProxyAuthorizationHeaderValue(HttpProxyClient httpProxy)
+        private static string GetProxyAuthorizationHeaderValue(ProxyClient httpProxy)
         {
-            string data = Convert.ToBase64String(Encoding.UTF8.GetBytes(
-                string.Format("{0}:{1}", httpProxy.Username, httpProxy.Password)));
+            var data = Convert.ToBase64String(Encoding.UTF8.GetBytes(
+                $"{httpProxy.Username}:{httpProxy.Password}"));
 
-            return string.Format("Basic {0}", data);
+            return $"Basic {data}";
         }
 
         private string GetLanguageHeaderValue()
@@ -2526,8 +2518,7 @@ namespace xNet.Net
                 return cultureName;
             }
 
-            return string.Format("{0},{1};q=0.8,en-US;q=0.6,en;q=0.4",
-                cultureName, cultureName.Substring(0, 2));
+            return $"{cultureName},{cultureName.Substring(0, 2)};q=0.8,en-US;q=0.6,en;q=0.4";
         }
 
         private string GetCharsetHeaderValue()
@@ -2548,10 +2539,10 @@ namespace xNet.Net
                 charsetName = CharacterSet.WebName;
             }
 
-            return string.Format("{0},utf-8;q=0.7,*;q=0.3", charsetName);
+            return $"{charsetName},utf-8;q=0.7,*;q=0.3";
         }
 
-        private void MergeHeaders(Dictionary<string, string> dic1, Dictionary<string, string> dic2)
+        private static void MergeHeaders(IDictionary<string, string> dic1, Dictionary<string, string> dic2)
         {
             foreach (var dicItem2 in dic2)
             {
@@ -2561,7 +2552,7 @@ namespace xNet.Net
 
         #endregion
 
-        private HttpProxyClient FindHttpProxyInChain(ChainProxyClient chainProxy)
+        private static HttpProxyClient FindHttpProxyInChain(ChainProxyClient chainProxy)
         {
             HttpProxyClient foundProxy = null;
 
@@ -2581,7 +2572,7 @@ namespace xNet.Net
                 }
                 else if (proxy.Type == ProxyType.Chain)
                 {
-                    HttpProxyClient foundDeepProxy =
+                    var foundDeepProxy =
                         FindHttpProxyInChain(proxy as ChainProxyClient);
 
                     if (foundDeepProxy != null &&
@@ -2596,7 +2587,7 @@ namespace xNet.Net
             return foundProxy;
         }
 
-        private string ToHeadersString(Dictionary<string, string> headers)
+        private static string ToHeadersString(Dictionary<string, string> headers)
         {
             var headersBuilder = new StringBuilder();
 
@@ -2614,7 +2605,7 @@ namespace xNet.Net
         // - заголовки, которы задаются через специальные свойства, либо автоматически
         // - заголовки, которые задаются через индексатор
         // - временные заголовки, которые задаются через метод AddHeader
-        private string GenerateHeaders(HttpMethod method)
+        private string GenerateHeaders()
         {
             var headers = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
@@ -2626,7 +2617,7 @@ namespace xNet.Net
             }
             else
             {
-                headers["Host"] = string.Format("{0}:{1}", Address.Host, Address.Port);
+                headers["Host"] = $"{Address.Host}:{Address.Port}";
             }
 
             #endregion
@@ -2758,7 +2749,7 @@ namespace xNet.Net
         }
 
         // Проверяет, можно ли задавать этот заголовок.
-        private bool CheckHeader(string name)
+        private static bool CheckHeader(string name)
         {
             return _closedHeaders.Contains(name, StringComparer.OrdinalIgnoreCase);
         }

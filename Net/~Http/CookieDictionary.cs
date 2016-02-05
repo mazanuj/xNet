@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace xNet.Net
@@ -7,13 +8,14 @@ namespace xNet.Net
     /// <summary>
     /// Представляет коллекцию HTTP-куки.
     /// </summary>
+    [Serializable]
     public class CookieDictionary : Dictionary<string, string>
     {
         /// <summary>
         /// Возвращает или задает значение, указывающие, закрыты ли куки для редактирования
         /// </summary>
         /// <value>Значение по умолчанию — <see langword="false"/>.</value>
-        public bool IsLocked { get; set; }
+        public bool IsLocked { get; private set; }
 
 
         /// <summary>
@@ -25,8 +27,14 @@ namespace xNet.Net
             IsLocked = isLocked;
         }
 
+	    ///<summary>
+	    /// Конструктор для десериализации объекта
+	    /// </summary>
+	    protected CookieDictionary(SerializationInfo info, StreamingContext context) : base(info, context)
+	    {
+	    }
 
-        /// <summary>
+	    /// <summary>
         /// Возвращает строку, состоящую из имён и значений куки.
         /// </summary>
         /// <returns>Строка, состоящая из имён и значений куки.</returns>

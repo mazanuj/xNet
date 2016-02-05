@@ -88,7 +88,7 @@ namespace xNet.Net
 
             _boundary = boundary;
 
-            _contentType = string.Format("multipart/form-data; boundary={0}", _boundary);
+            _contentType = $"multipart/form-data; boundary={_boundary}";
         }
 
         #endregion
@@ -310,8 +310,8 @@ namespace xNet.Net
 
             #endregion
 
-            byte[] newLineBytes = Encoding.ASCII.GetBytes("\r\n");
-            byte[] boundaryBytes = Encoding.ASCII.GetBytes("--" + _boundary + "\r\n");
+            var newLineBytes = Encoding.ASCII.GetBytes("\r\n");
+            var boundaryBytes = Encoding.ASCII.GetBytes("--" + _boundary + "\r\n");
 
             foreach (var element in _elements)
             {
@@ -330,7 +330,7 @@ namespace xNet.Net
                         FieldTemplate, element.Name);
                 }
 
-                byte[] fieldBytes = Encoding.ASCII.GetBytes(field);
+                var fieldBytes = Encoding.ASCII.GetBytes(field);
                 stream.Write(fieldBytes, 0, fieldBytes.Length);
 
                 element.Content.WriteTo(stream);

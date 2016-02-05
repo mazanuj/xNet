@@ -21,7 +21,7 @@ namespace xNet.Net
         /// </summary>
         /// <param name="message">Сообщение об ошибке с объяснением причины исключения.</param>
         /// <param name="innerException">Исключение, вызвавшее текущие исключение, или значение <see langword="null"/>.</param>
-        public NetException(string message, Exception innerException = null)
+        protected NetException(string message, Exception innerException = null)
             : base(message, innerException) { }
 
         #endregion

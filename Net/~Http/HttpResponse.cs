@@ -96,7 +96,7 @@ namespace xNet.Net
                         }
                     }
 
-                    byte b = _buffer[Position++];
+                    var b = _buffer[Position++];
 
                     _lineBuffer[_linePosition++] = b;
 
@@ -110,7 +110,7 @@ namespace xNet.Net
                     if (_linePosition == _lineBuffer.Length)
                     {
                         // Увеличиваем размер буфера линии в два раза.
-                        byte[] newLineBuffer = new byte[_lineBuffer.Length * 2];
+                        var newLineBuffer = new byte[_lineBuffer.Length * 2];
 
                         _lineBuffer.CopyTo(newLineBuffer, 0);
                         _lineBuffer = newLineBuffer;
@@ -122,7 +122,7 @@ namespace xNet.Net
 
             public int Read(byte[] buffer, int index, int length)
             {
-                int curLength = Length - Position;
+                var curLength = Length - Position;
 
                 if (curLength > length)
                 {
@@ -248,7 +248,7 @@ namespace xNet.Net
                 // Если установлен лимит на количество считанных байт.
                 if (LimitBytesRead != 0)
                 {
-                    int length = LimitBytesRead - TotalBytesRead;
+                    var length = LimitBytesRead - TotalBytesRead;
 
                     // Если лимит достигнут.
                     if (length == 0)
@@ -482,7 +482,7 @@ namespace xNet.Net
         {
             get
             {
-                int numStatusCode = (int)StatusCode;
+                var numStatusCode = (int)StatusCode;
 
                 if (numStatusCode >= 300 && numStatusCode < 400)
                 {
@@ -669,7 +669,7 @@ namespace xNet.Net
 
             try
             {
-                IEnumerable<BytesWraper> source = GetMessageBodySource();
+                var source = GetMessageBodySource();
 
                 foreach (var bytes in source)
                 {
@@ -726,7 +726,7 @@ namespace xNet.Net
 
             try
             {
-                IEnumerable<BytesWraper> source = GetMessageBodySource();
+                var source = GetMessageBodySource();
 
                 foreach (var bytes in source)
                 {
@@ -752,7 +752,7 @@ namespace xNet.Net
 
             MessageBodyLoaded = true;
 
-            string text = CharacterSet.GetString(
+            var text = CharacterSet.GetString(
                 memoryStream.GetBuffer(), 0, (int)memoryStream.Length);
 
             return text;
@@ -808,7 +808,7 @@ namespace xNet.Net
             {
                 using (var fileStream = new FileStream(path, FileMode.Create))
                 {
-                    IEnumerable<BytesWraper> source = GetMessageBodySource();
+                    var source = GetMessageBodySource();
 
                     foreach (var bytes in source)
                     {
@@ -871,7 +871,7 @@ namespace xNet.Net
                 return null;
             }
 
-            var stream = new HttpResponseStream(_request.ClientStream, _receiverHelper, (ex) =>
+            var stream = new HttpResponseStream(_request.ClientStream, _receiverHelper, ex =>
             {
                 if (ex != null)
                 {
@@ -929,7 +929,7 @@ namespace xNet.Net
 
             try
             {
-                IEnumerable<BytesWraper> source = GetMessageBodySource();
+                var source = GetMessageBodySource();
 
                 foreach (var bytes in source)
                 {
@@ -988,9 +988,7 @@ namespace xNet.Net
             {
                 try
                 {
-                    IEnumerable<BytesWraper> source = GetMessageBodySource();
-
-                    foreach (var bytes in source) { }
+                    GetMessageBodySource();
                 }
                 catch (Exception ex)
                 {
@@ -1204,26 +1202,19 @@ namespace xNet.Net
 
                 if (startingLine.Length == 0)
                 {
-                    HttpException exception =
+                    var exception =
                         NewHttpException(Resources.HttpException_ReceivedEmptyResponse);
 
                     exception.EmptyMessageBody = true;
 
                     throw exception;
                 }
-                else if (startingLine.Equals(
-                    HttpHelper.NewLine, StringComparison.Ordinal))
-                {
-                    continue;
-                }
-                else
-                {
+                if (!startingLine.Equals(HttpHelper.NewLine, StringComparison.Ordinal))
                     break;
-                }
             }
 
-            string version = startingLine.Substring("HTTP/", " ");
-            string statusCode = startingLine.Substring(" ", " ");
+            var version = startingLine.Substring("HTTP/", " ");
+            var statusCode = startingLine.Substring(" ", " ");
 
             if (version.Length == 0 || statusCode.Length == 0)
             {
@@ -1244,21 +1235,21 @@ namespace xNet.Net
             }
 
             // Ищем позицию, где заканчивается куки и начинается описание его параметров.
-            int endCookiePos = value.IndexOf(';');
+            var endCookiePos = value.IndexOf(';');
 
             // Ищем позицию между именем и значением куки.
-            int separatorPos = value.IndexOf('=');
+            var separatorPos = value.IndexOf('=');
 
             if (separatorPos == -1)
             {
-                string message = string.Format(
+                var message = string.Format(
                     Resources.HttpException_WrongCookie, value, Address.Host);
 
                 throw NewHttpException(message);
             }
 
             string cookieValue;
-            string cookieName = value.Substring(0, separatorPos);
+            var cookieName = value.Substring(0, separatorPos);
 
             if (endCookiePos == -1)
             {
@@ -1271,12 +1262,12 @@ namespace xNet.Net
 
                 #region Получаем время, которое куки будет действителен
 
-                int expiresPos = value.IndexOf("expires=");
+                var expiresPos = value.IndexOf("expires=");
 
                 if (expiresPos != -1)
                 {
                     string expiresStr;
-                    int endExpiresPos = value.IndexOf(';', expiresPos);
+                    var endExpiresPos = value.IndexOf(';', expiresPos);
 
                     expiresPos += 8;
 
@@ -1320,7 +1311,7 @@ namespace xNet.Net
         {
             while (true)
             {
-                string header = _receiverHelper.ReadLine();
+                var header = _receiverHelper.ReadLine();
 
                 // Если достигнут конец заголовков.
                 if (header.Equals(
@@ -1330,18 +1321,18 @@ namespace xNet.Net
                 }
 
                 // Ищем позицию между именем и значением заголовка.
-                int separatorPos = header.IndexOf(':');
+                var separatorPos = header.IndexOf(':');
 
                 if (separatorPos == -1)
                 {
-                    string message = string.Format(
+                    var message = string.Format(
                         Resources.HttpException_WrongHeader, header, Address.Host);
 
                     throw NewHttpException(message);
                 }
 
-                string headerName = header.Substring(0, separatorPos);
-                string headerValue = header.Substring(separatorPos + 1).Trim(' ', '\t', '\r', '\n');
+                var headerName = header.Substring(0, separatorPos);
+                var headerValue = header.Substring(separatorPos + 1).Trim(' ', '\t', '\r', '\n');
 
                 if (headerName.Equals("Set-Cookie", StringComparison.OrdinalIgnoreCase))
                 {
@@ -1408,12 +1399,12 @@ namespace xNet.Net
         {
             var bytesWraper = new BytesWraper();
 
-            int bufferSize = _request.TcpClient.ReceiveBufferSize;
-            byte[] buffer = new byte[bufferSize];
+            var bufferSize = _request.TcpClient.ReceiveBufferSize;
+            var buffer = new byte[bufferSize];
 
             bytesWraper.Value = buffer;
 
-            int begBytesRead = 0;
+            var begBytesRead = 0;
 
             // Считываем начальные данные из тела сообщения.
             if (stream is GZipStream || stream is DeflateStream)
@@ -1439,11 +1430,11 @@ namespace xNet.Net
 
             // Проверяем, есть ли открывающий тег '<html'.
             // Если есть, то считываем данные то тех пор, пока не встретим закрывающий тек '</html>'.
-            bool isHtml = FindSignature(buffer, begBytesRead, _openHtmlSignatureBytes);
+            var isHtml = FindSignature(buffer, begBytesRead, _openHtmlSignatureBytes);
 
             if (isHtml)
             {
-                bool found = FindSignature(buffer, begBytesRead, _closeHtmlSignatureBytes);
+                var found = FindSignature(buffer, begBytesRead, _closeHtmlSignatureBytes);
 
                 // Проверяем, есть ли в начальных данных закрывающий тег.
                 if (found)
@@ -1454,7 +1445,7 @@ namespace xNet.Net
 
             while (true)
             {
-                int bytesRead = stream.Read(buffer, 0, bufferSize);
+                var bytesRead = stream.Read(buffer, 0, bufferSize);
 
                 // Если тело сообщения представляет HTML.
                 if (isHtml)
@@ -1466,7 +1457,7 @@ namespace xNet.Net
                         continue;
                     }
 
-                    bool found = FindSignature(buffer, bytesRead, _closeHtmlSignatureBytes);
+                    var found = FindSignature(buffer, bytesRead, _closeHtmlSignatureBytes);
 
                     if (found)
                     {
@@ -1489,15 +1480,15 @@ namespace xNet.Net
         // Загрузка тела сообщения известной длины.
         private IEnumerable<BytesWraper> ReceiveMessageBody(int contentLength)
         {
-            Stream stream = _request.ClientStream;
+            var stream = _request.ClientStream;
             var bytesWraper = new BytesWraper();
 
-            int bufferSize = _request.TcpClient.ReceiveBufferSize;
-            byte[] buffer = new byte[bufferSize];
+            var bufferSize = _request.TcpClient.ReceiveBufferSize;
+            var buffer = new byte[bufferSize];
 
             bytesWraper.Value = buffer;
 
-            int totalBytesRead = 0;
+            var totalBytesRead = 0;
 
             while (totalBytesRead != contentLength)
             {
@@ -1529,17 +1520,17 @@ namespace xNet.Net
         // Загрузка тела сообщения частями.
         private IEnumerable<BytesWraper> ReceiveMessageBodyChunked()
         {
-            Stream stream = _request.ClientStream;
+            var stream = _request.ClientStream;
             var bytesWraper = new BytesWraper();
 
-            int bufferSize = _request.TcpClient.ReceiveBufferSize;
-            byte[] buffer = new byte[bufferSize];
+            var bufferSize = _request.TcpClient.ReceiveBufferSize;
+            var buffer = new byte[bufferSize];
 
             bytesWraper.Value = buffer;
 
             while (true)
             {
-                string line = _receiverHelper.ReadLine();
+                var line = _receiverHelper.ReadLine();
 
                 // Если достигнут конец блока.
                 if (line.Equals(
@@ -1557,7 +1548,7 @@ namespace xNet.Net
                 }
 
                 int blockLength;
-                int totalBytesRead = 0;
+                var totalBytesRead = 0;
 
                 #region Задаём длину блока
 
@@ -1580,7 +1571,7 @@ namespace xNet.Net
 
                 while (totalBytesRead != blockLength)
                 {
-                    int length = blockLength - totalBytesRead;
+                    var length = blockLength - totalBytesRead;
 
                     if (length > bufferSize)
                     {
@@ -1619,16 +1610,16 @@ namespace xNet.Net
             var streamWrapper = new ZipWraperStream(
                 _request.ClientStream, _receiverHelper);
 
-            using (Stream stream = GetZipStream(streamWrapper))
+            using (var stream = GetZipStream(streamWrapper))
             {
-                int bufferSize = _request.TcpClient.ReceiveBufferSize;
-                byte[] buffer = new byte[bufferSize];
+                var bufferSize = _request.TcpClient.ReceiveBufferSize;
+                var buffer = new byte[bufferSize];
 
                 bytesWraper.Value = buffer;
 
                 while (true)
                 {
-                    int bytesRead = stream.Read(buffer, 0, bufferSize);
+                    var bytesRead = stream.Read(buffer, 0, bufferSize);
 
                     if (bytesRead == 0)
                     {
@@ -1656,16 +1647,16 @@ namespace xNet.Net
             var streamWrapper = new ZipWraperStream
                 (_request.ClientStream, _receiverHelper);
 
-            using (Stream stream = GetZipStream(streamWrapper))
+            using (var stream = GetZipStream(streamWrapper))
             {
-                int bufferSize = _request.TcpClient.ReceiveBufferSize;
-                byte[] buffer = new byte[bufferSize];
+                var bufferSize = _request.TcpClient.ReceiveBufferSize;
+                var buffer = new byte[bufferSize];
 
                 bytesWraper.Value = buffer;
 
                 while (true)
                 {
-                    string line = _receiverHelper.ReadLine();
+                    var line = _receiverHelper.ReadLine();
 
                     // Если достигнут конец блока.
                     if (line.Equals(
@@ -1708,7 +1699,7 @@ namespace xNet.Net
 
                     while (true)
                     {
-                        int bytesRead = stream.Read(buffer, 0, bufferSize);
+                        var bytesRead = stream.Read(buffer, 0, bufferSize);
 
                         if (bytesRead == 0)
                         {
@@ -1781,7 +1772,7 @@ namespace xNet.Net
                     location = location.Substring(1);
                 }
 
-                string[] values = Uri.UnescapeDataString(location).Split('?');
+                var values = Uri.UnescapeDataString(location).Split('?');
 
                 var uriBuilder = new UriBuilder(_request.Address);
                 uriBuilder.Path = values[0];
@@ -1808,10 +1799,10 @@ namespace xNet.Net
                 return (_request.CharacterSet ?? Encoding.Default);
             }
 
-            string contentType = _headers["Content-Type"];
+            var contentType = _headers["Content-Type"];
 
             // Пример текста, где ищется позиция символа: text/html; charset=UTF-8
-            int charsetPos = contentType.IndexOf('=');
+            var charsetPos = contentType.IndexOf('=');
 
             if (charsetPos == -1)
             {
@@ -1847,10 +1838,10 @@ namespace xNet.Net
         {
             if (_headers.ContainsKey("Content-Type"))
             {
-                string contentType = _headers["Content-Type"];
+                var contentType = _headers["Content-Type"];
 
                 // Ищем позицию, где заканчивается описание типа контента и начинается описание его параметров.
-                int endTypePos = contentType.IndexOf(';');
+                var endTypePos = contentType.IndexOf(';');
 
                 if (endTypePos != -1)
                 {
@@ -1867,8 +1858,8 @@ namespace xNet.Net
 
         private void WaitData()
         {
-            int sleepTime = 0;
-            int delay = (_request.TcpClient.ReceiveTimeout < 10) ?
+            var sleepTime = 0;
+            var delay = (_request.TcpClient.ReceiveTimeout < 10) ?
                 10 : _request.TcpClient.ReceiveTimeout;
 
             while (!_request.ClientNetworkStream.DataAvailable)
@@ -1885,7 +1876,7 @@ namespace xNet.Net
 
         private Stream GetZipStream(Stream stream)
         {
-            string contentEncoding = _headers["Content-Encoding"].ToLower();
+            var contentEncoding = _headers["Content-Encoding"].ToLower();
 
             switch (contentEncoding)
             {
@@ -1901,16 +1892,16 @@ namespace xNet.Net
             }
         }
 
-        private bool FindSignature(byte[] source, int sourceLength, byte[] signature)
+        private static bool FindSignature(IReadOnlyList<byte> source, int sourceLength, IReadOnlyList<byte> signature)
         {
-            int length = (sourceLength - signature.Length) + 1;
+            var length = (sourceLength - signature.Count) + 1;
 
-            for (int sourceIndex = 0; sourceIndex < length; ++sourceIndex)
+            for (var sourceIndex = 0; sourceIndex < length; ++sourceIndex)
             {
-                for (int signatureIndex = 0; signatureIndex < signature.Length; ++signatureIndex)
+                for (var signatureIndex = 0; signatureIndex < signature.Count; ++signatureIndex)
                 {
-                    byte sourceByte = source[signatureIndex + sourceIndex];
-                    char sourceChar = (char)sourceByte;
+                    var sourceByte = source[signatureIndex + sourceIndex];
+                    var sourceChar = (char)sourceByte;
 
                     if (char.IsLetter(sourceChar))
                     {
@@ -1923,7 +1914,7 @@ namespace xNet.Net
                     {
                         break;
                     }
-                    else if (signatureIndex == (signature.Length - 1))
+                    else if (signatureIndex == (signature.Count - 1))
                     {
                         return true;
                     }

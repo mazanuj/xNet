@@ -150,7 +150,7 @@ namespace xNet.Net
         /// <exception cref="System.IO.IOException">Раздел <see cref="Microsoft.Win32.RegistryKey"/>, содержащий заданное значение, был помечен для удаления.</exception>
         public static bool GetIEProxyEnable()
         {
-            using (RegistryKey regKey = Registry.CurrentUser.OpenSubKey(PathToInternetOptions))
+            using (var regKey = Registry.CurrentUser.OpenSubKey(PathToInternetOptions))
             {
                 var value = regKey.GetValue("ProxyEnable");
 
@@ -171,7 +171,7 @@ namespace xNet.Net
         /// <exception cref="System.UnauthorizedAccessException">Запись в объект <see cref="Microsoft.Win32.RegistryKey"/> невозможна, например, он не может быть открыт как раздел, доступный для записи, или у пользователя нет необходимых прав доступа.</exception>
         public static void SetIEProxyEnable(bool enabled)
         {
-            using (RegistryKey regKey = Registry.CurrentUser.CreateSubKey(PathToInternetOptions))
+            using (var regKey = Registry.CurrentUser.CreateSubKey(PathToInternetOptions))
             {
                 regKey.SetValue("ProxyEnable", (enabled) ? 1 : 0);
             }
@@ -187,7 +187,7 @@ namespace xNet.Net
         /// <exception cref="System.IO.IOException">Раздел <see cref="Microsoft.Win32.RegistryKey"/>, содержащий заданное значение, был помечен для удаления.</exception>
         public static string GetIEProxy()
         {
-            using (RegistryKey regKey = Registry.CurrentUser.OpenSubKey(PathToInternetOptions))
+            using (var regKey = Registry.CurrentUser.OpenSubKey(PathToInternetOptions))
             {
                 return (regKey.GetValue("ProxyServer") as string) ?? string.Empty;
             }
@@ -225,7 +225,7 @@ namespace xNet.Net
 
             #endregion
 
-            SetIEProxy(host + ":" + port.ToString());
+            SetIEProxy(host + ":" + port);
         }
 
         /// <summary>
@@ -237,7 +237,7 @@ namespace xNet.Net
         /// <exception cref="System.UnauthorizedAccessException">Запись в объект <see cref="Microsoft.Win32.RegistryKey"/> невозможна, например, он не может быть открыт как раздел, доступный для записи, или у пользователя нет необходимых прав доступа.</exception>
         public static void SetIEProxy(string hostAndPort)
         {
-            using (RegistryKey regKey = Registry.CurrentUser.CreateSubKey(PathToInternetOptions))
+            using (var regKey = Registry.CurrentUser.CreateSubKey(PathToInternetOptions))
             {
                 regKey.SetValue("ProxyServer", hostAndPort ?? string.Empty);
             }

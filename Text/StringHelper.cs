@@ -25,7 +25,7 @@ namespace xNet.Text
 
             var strBuilder = new StringBuilder();
 
-            for (int i = str.Length - 1; i >= 0; --i)
+            for (var i = str.Length - 1; i >= 0; --i)
             {
                 strBuilder.Append(str[i]);
             }
@@ -82,7 +82,7 @@ namespace xNet.Text
             #endregion
 
             // Ищем начало позиции левой подстроки.
-            int leftPosBegin = str.IndexOf(left, startIndex, comparsion);
+            var leftPosBegin = str.IndexOf(left, startIndex, comparsion);
 
             if (leftPosBegin == -1)
             {
@@ -90,10 +90,10 @@ namespace xNet.Text
             }
 
             // Вычисляем конец позиции левой подстроки.
-            int leftPosEnd = leftPosBegin + left.Length;
+            var leftPosEnd = leftPosBegin + left.Length;
 
             // Вычисляем длину найденной подстроки.
-            int length = str.Length - leftPosEnd;
+            var length = str.Length - leftPosEnd;
 
             return str.Substring(leftPosEnd, length);
         }
@@ -173,7 +173,7 @@ namespace xNet.Text
             #endregion
 
             // Ищем начало позиции левой подстроки.
-            int leftPosBegin = str.IndexOf(left, startIndex, comparsion);
+            var leftPosBegin = str.IndexOf(left, startIndex, comparsion);
 
             if (leftPosBegin == -1)
             {
@@ -181,10 +181,10 @@ namespace xNet.Text
             }
 
             // Вычисляем конец позиции левой подстроки.
-            int leftPosEnd = leftPosBegin + left.Length;
+            var leftPosEnd = leftPosBegin + left.Length;
 
             // Ищем начало позиции правой подстроки.
-            int rightPos = str.IndexOf(right, leftPosEnd, comparsion);
+            var rightPos = str.IndexOf(right, leftPosEnd, comparsion);
 
             if (rightPos == -1)
             {
@@ -192,7 +192,7 @@ namespace xNet.Text
             }
 
             // Вычисляем длину найденной подстроки.
-            int length = rightPos - leftPosEnd;
+            var length = rightPos - leftPosEnd;
 
             return str.Substring(leftPosEnd, length);
         }
@@ -262,7 +262,7 @@ namespace xNet.Text
             #endregion
 
             // Ищем начало позиции левой подстроки.
-            int leftPosBegin = str.LastIndexOf(left, startIndex, comparsion);
+            var leftPosBegin = str.LastIndexOf(left, startIndex, comparsion);
 
             if (leftPosBegin == -1)
             {
@@ -270,10 +270,10 @@ namespace xNet.Text
             }
 
             // Вычисляем конец позиции левой подстроки.
-            int leftPosEnd = leftPosBegin + left.Length;
+            var leftPosEnd = leftPosBegin + left.Length;
 
             // Вычисляем длину найденной подстроки.
-            int length = str.Length - leftPosEnd;
+            var length = str.Length - leftPosEnd;
 
             return str.Substring(leftPosEnd, length);
         }
@@ -358,7 +358,7 @@ namespace xNet.Text
             #endregion
 
             // Ищем начало позиции левой подстроки.
-            int leftPosBegin = str.LastIndexOf(left, startIndex, comparsion);
+            var leftPosBegin = str.LastIndexOf(left, startIndex, comparsion);
 
             if (leftPosBegin == -1)
             {
@@ -366,10 +366,10 @@ namespace xNet.Text
             }
 
             // Вычисляем конец позиции левой подстроки.
-            int leftPosEnd = leftPosBegin + left.Length;
+            var leftPosEnd = leftPosBegin + left.Length;
 
             // Ищем начало позиции правой подстроки.
-            int rightPos = str.IndexOf(right, leftPosEnd, comparsion);
+            var rightPos = str.IndexOf(right, leftPosEnd, comparsion);
 
             if (rightPos == -1)
             {
@@ -384,7 +384,7 @@ namespace xNet.Text
             }
 
             // Вычисляем длину найденной подстроки.
-            int length = rightPos - leftPosEnd;
+            var length = rightPos - leftPosEnd;
 
             return str.Substring(leftPosEnd, length);
         }
@@ -469,13 +469,13 @@ namespace xNet.Text
 
             #endregion
 
-            int currentStartIndex = startIndex;
-            List<string> strings = new List<string>();
+            var currentStartIndex = startIndex;
+            var strings = new List<string>();
 
             while (true)
             {
                 // Ищем начало позиции левой подстроки.
-                int leftPosBegin = str.IndexOf(left, currentStartIndex, comparsion);
+                var leftPosBegin = str.IndexOf(left, currentStartIndex, comparsion);
 
                 if (leftPosBegin == -1)
                 {
@@ -483,10 +483,10 @@ namespace xNet.Text
                 }
 
                 // Вычисляем конец позиции левой подстроки.
-                int leftPosEnd = leftPosBegin + left.Length;
+                var leftPosEnd = leftPosBegin + left.Length;
 
                 // Ищем начало позиции правой строки.
-                int rightPos = str.IndexOf(right, leftPosEnd, comparsion);
+                var rightPos = str.IndexOf(right, leftPosEnd, comparsion);
 
                 if (rightPos == -1)
                 {
@@ -494,7 +494,7 @@ namespace xNet.Text
                 }
 
                 // Вычисляем длину найденной подстроки.
-                int length = rightPos - leftPosEnd;
+                var length = rightPos - leftPosEnd;
 
                 strings.Add(str.Substring(leftPosEnd, length));
 

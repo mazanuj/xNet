@@ -103,7 +103,7 @@ namespace xNet.Net
 
             while (true)
             {
-                int bytesRead = _content.Read(buffer, 0, buffer.Length);
+                var bytesRead = _content.Read(buffer, 0, buffer.Length);
 
                 if (bytesRead == 0)
                 {

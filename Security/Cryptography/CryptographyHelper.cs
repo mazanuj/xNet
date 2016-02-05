@@ -37,9 +37,9 @@ namespace xNet.Security.Cryptography
             using (HashAlgorithm hashProvider = new MD5CryptoServiceProvider())
             {
                 var strBuilder = new StringBuilder(32);
-                byte[] hashData = hashProvider.ComputeHash(data);
+                var hashData = hashProvider.ComputeHash(data);
  
-                for (int i = 0; i < hashData.Length; ++i)
+                for (var i = 0; i < hashData.Length; ++i)
                 {
                     strBuilder.Append(hashData[i].ToString("x2"));
                 }
